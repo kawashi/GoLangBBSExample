@@ -1,0 +1,47 @@
+consumes:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+host: localhost:8080
+info:
+  description: A teaser for goa.
+  title: BBS Example Server.
+  version: ""
+paths:
+  /home:
+    get:
+      description: home.
+      operationId: home#home
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      schemes:
+      - http
+      summary: home home
+      tags:
+      - home
+  /ping:
+    get:
+      description: PingPong.
+      operationId: ping#ping
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      schemes:
+      - http
+      summary: ping ping
+      tags:
+      - ping
+produces:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+schemes:
+- http
+swagger: "2.0"
