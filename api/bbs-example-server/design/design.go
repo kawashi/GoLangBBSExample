@@ -24,6 +24,18 @@ var _ = Resource("home", func() {
 	Action("home", func() {
 		Routing(GET("/home"))
 		Description("home.")
-		Response(OK, "text/plain")
+		Response(OK, UserPostMedia)
+	})
+})
+
+var UserPostMedia = MediaType("application/json", func() {
+	Description("User post.")
+	Attributes(func() {
+		Attribute("message", String, "message", func() {
+			Example("message")
+		})
+	})
+	View("default", func() {
+		Attribute("message")
 	})
 })

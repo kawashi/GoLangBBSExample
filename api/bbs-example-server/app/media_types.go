@@ -9,3 +9,11 @@
 // --version=v1.3.1
 
 package app
+
+// User post. (default view)
+//
+// Identifier: application/json; view=default
+type JSON struct {
+	// message
+	Message *string `form:"message,omitempty" json:"message,omitempty" yaml:"message,omitempty" xml:"message,omitempty"`
+}

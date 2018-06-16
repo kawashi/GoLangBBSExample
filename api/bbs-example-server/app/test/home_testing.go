@@ -25,15 +25,16 @@ import (
 )
 
 // HomeHomeOK runs the method Home of the given controller with the given parameters.
-// It returns the response writer so it's possible to inspect the response headers.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func HomeHomeOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.HomeController) http.ResponseWriter {
+func HomeHomeOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.HomeController) (http.ResponseWriter, *app.JSON) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
+		resp   interface{}
 
-		respSetter goatest.ResponseSetterFunc = func(r interface{}) {}
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
 	)
 	if service == nil {
 		service = goatest.Service(&logBuf, respSetter)
@@ -66,7 +67,7 @@ func HomeHomeOK(t goatest.TInterface, ctx context.Context, service *goa.Service,
 			panic("invalid test data " + _err.Error()) // bug
 		}
 		t.Errorf("unexpected parameter validation error: %+v", e)
-		return nil
+		return nil, nil
 	}
 
 	// Perform action
@@ -79,7 +80,15 @@ func HomeHomeOK(t goatest.TInterface, ctx context.Context, service *goa.Service,
 	if rw.Code != 200 {
 		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
 	}
+	var mt *app.JSON
+	if resp != nil {
+		var _ok bool
+		mt, _ok = resp.(*app.JSON)
+		if !_ok {
+			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of app.JSON", resp, resp)
+		}
+	}
 
 	// Return results
-	return rw
+	return rw, mt
 }
