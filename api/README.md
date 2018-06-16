@@ -25,7 +25,23 @@ goa + gorm 構成のAPIサーバです。
 - [ReSTARTR/goa-gorm-sample - GitHub](https://github.com/ReSTARTR/goa-gorm-sample)
 - [クラスター社のGo製WebAPI開発で主に使ってるライブラリについて - Qiita](https://qiita.com/kyokomi/items/dcd8384a0a042d72d22d)
 
-gormaの導入中にエラーが出ましたが、下記記事で解決しました。
+gormaの導入中にエラーが出ましたが、下記の記事で解決しました。
+
+```sh
+$ goagen gen -d BBS-Example/api/bbs-example-server/design --pkg-path=github.com/goadesign/gorma
+
+../../../../github.com/goadesign/gorma/relationalmodel.go:9:2: cannot find package "bitbucket.org/pkg/inflect" in any of:
+	/usr/local/Cellar/go/1.10.2/libexec/src/bitbucket.org/pkg/inflect (from $GOROOT)
+	/Users/allen/.go/src/bitbucket.org/pkg/inflect (from $GOPATH)
+```
 
 - [Code generated following the example in the README is invalid - GitHub](https://github.com/goadesign/goa/issues/231)
+
+```sh
+$ cd $GOPATH/src/github.com/goadesign/gorma
+$ make depend
+
+go: missing Mercurial command. See https://golang.org/s/gogetcmd
+```
+
 - [goのフレームワーク ginの"gin-scaffold"を入れようとしたらエラーが出た。](http://tabilike.hatenablog.com/entry/2017/11/01/113023)
