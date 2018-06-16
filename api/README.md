@@ -1,6 +1,7 @@
 # APIサーバ
 
-goa + gorm 構成のAPIサーバです。
+goa + gorm 構成のAPIサーバです。  
+IDEは [GoLand](https://www.jetbrains.com/go/) を使用しています。
 
 # 参考サイト
 
