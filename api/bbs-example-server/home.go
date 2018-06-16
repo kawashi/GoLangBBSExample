@@ -19,9 +19,12 @@ func NewHomeController(service *goa.Service) *HomeController {
 // Home runs the home action.
 func (c *HomeController) Home(ctx *app.HomeHomeContext) error {
 	// TODO: 投稿のダミーレコードを生成
-	post := &models.UserPost{Message: "test"}
-	db.NewRecord(&post)
-	db.Create(&post)
+	//post := &models.UserPost{Message: "test"}
+	//db.NewRecord(&post)
+	//db.Create(&post)
 
-	return ctx.OK([]byte("Home."))
+	post := &models.UserPost{}
+	db.First(&post)
+
+	return ctx.OK(post.UserPostToJSON())
 }
