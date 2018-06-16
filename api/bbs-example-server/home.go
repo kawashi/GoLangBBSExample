@@ -3,6 +3,7 @@ package main
 import (
 	"BBS-Example/api/bbs-example-server/app"
 	"github.com/goadesign/goa"
+	"BBS-Example/api/bbs-example-server/models"
 )
 
 // HomeController implements the home resource.
@@ -17,5 +18,10 @@ func NewHomeController(service *goa.Service) *HomeController {
 
 // Home runs the home action.
 func (c *HomeController) Home(ctx *app.HomeHomeContext) error {
+	// TODO: 投稿のダミーレコードを生成
+	post := &models.UserPost{Message: "test"}
+	db.NewRecord(&post)
+	db.Create(&post)
+
 	return ctx.OK([]byte("Home."))
 }
