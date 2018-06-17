@@ -10,6 +10,16 @@ var _ = API("bbs-example-server", func() {
 	Description("A teaser for goa.")
 	Host("localhost:8888")
 	Scheme("http")
+	Origin("http://localhost:8888/swagger", func() {
+		//クライアントに公開された1つ以上のヘッダー
+		Expose("X-Time")
+		// 1つまたは複数の許可されたHTTPメソッド
+		Methods("GET", "POST", "PUT", "DELETE")
+		//プリフライト要求応答をキャッシュする時間
+		MaxAge(600)
+		// Access-Control-Allow-Credentialsヘッダーを設定する
+		Credentials()
+	})
 })
 
 var _ = Resource("user_post", func() {

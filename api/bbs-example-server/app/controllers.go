@@ -13,6 +13,7 @@ package app
 import (
 	"context"
 	"github.com/goadesign/goa"
+	"github.com/goadesign/goa/cors"
 	"net/http"
 )
 
@@ -41,6 +42,7 @@ type PingController interface {
 func MountPingController(service *goa.Service, ctrl PingController) {
 	initService(service)
 	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/ping", ctrl.MuxHandler("preflight", handlePingOrigin(cors.HandlePreflight()), nil))
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -54,8 +56,36 @@ func MountPingController(service *goa.Service, ctrl PingController) {
 		}
 		return ctrl.Ping(rctx)
 	}
+	h = handlePingOrigin(h)
 	service.Mux.Handle("GET", "/ping", ctrl.MuxHandler("ping", h, nil))
 	service.LogInfo("mount", "ctrl", "Ping", "action", "Ping", "route", "GET /ping")
+}
+
+// handlePingOrigin applies the CORS response headers corresponding to the origin.
+func handlePingOrigin(h goa.Handler) goa.Handler {
+
+	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		origin := req.Header.Get("Origin")
+		if origin == "" {
+			// Not a CORS request
+			return h(ctx, rw, req)
+		}
+		if cors.MatchOrigin(origin, "http://localhost:8888/swagger") {
+			ctx = goa.WithLogContext(ctx, "origin", origin)
+			rw.Header().Set("Access-Control-Allow-Origin", origin)
+			rw.Header().Set("Vary", "Origin")
+			rw.Header().Set("Access-Control-Expose-Headers", "X-Time")
+			rw.Header().Set("Access-Control-Max-Age", "600")
+			rw.Header().Set("Access-Control-Allow-Credentials", "true")
+			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
+				// We are handling a preflight request
+				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+			}
+			return h(ctx, rw, req)
+		}
+
+		return h(ctx, rw, req)
+	}
 }
 
 // UserPostController is the controller interface for the UserPost actions.
@@ -69,6 +99,7 @@ type UserPostController interface {
 func MountUserPostController(service *goa.Service, ctrl UserPostController) {
 	initService(service)
 	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/user_posts/", ctrl.MuxHandler("preflight", handleUserPostOrigin(cors.HandlePreflight()), nil))
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -88,6 +119,7 @@ func MountUserPostController(service *goa.Service, ctrl UserPostController) {
 		}
 		return ctrl.Create(rctx)
 	}
+	h = handleUserPostOrigin(h)
 	service.Mux.Handle("POST", "/user_posts/", ctrl.MuxHandler("create", h, unmarshalCreateUserPostPayload))
 	service.LogInfo("mount", "ctrl", "UserPost", "action", "Create", "route", "POST /user_posts/")
 
@@ -103,8 +135,36 @@ func MountUserPostController(service *goa.Service, ctrl UserPostController) {
 		}
 		return ctrl.Index(rctx)
 	}
+	h = handleUserPostOrigin(h)
 	service.Mux.Handle("GET", "/user_posts/", ctrl.MuxHandler("index", h, nil))
 	service.LogInfo("mount", "ctrl", "UserPost", "action", "Index", "route", "GET /user_posts/")
+}
+
+// handleUserPostOrigin applies the CORS response headers corresponding to the origin.
+func handleUserPostOrigin(h goa.Handler) goa.Handler {
+
+	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		origin := req.Header.Get("Origin")
+		if origin == "" {
+			// Not a CORS request
+			return h(ctx, rw, req)
+		}
+		if cors.MatchOrigin(origin, "http://localhost:8888/swagger") {
+			ctx = goa.WithLogContext(ctx, "origin", origin)
+			rw.Header().Set("Access-Control-Allow-Origin", origin)
+			rw.Header().Set("Vary", "Origin")
+			rw.Header().Set("Access-Control-Expose-Headers", "X-Time")
+			rw.Header().Set("Access-Control-Max-Age", "600")
+			rw.Header().Set("Access-Control-Allow-Credentials", "true")
+			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
+				// We are handling a preflight request
+				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+			}
+			return h(ctx, rw, req)
+		}
+
+		return h(ctx, rw, req)
+	}
 }
 
 // unmarshalCreateUserPostPayload unmarshals the request body into the context request data Payload field.

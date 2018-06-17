@@ -67,6 +67,8 @@ func NewCreateUserPostContext(ctx context.Context, r *http.Request, service *goa
 
 // OK sends a HTTP response with status code 200.
 func (ctx *CreateUserPostContext) OK(resp []byte) error {
+	ctx.ResponseData.Header().Set("Access-Control-Allow-Origin", "*")
+
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
 		ctx.ResponseData.Header().Set("Content-Type", "text/plain")
 	}
@@ -96,6 +98,8 @@ func NewIndexUserPostContext(ctx context.Context, r *http.Request, service *goa.
 
 // OK sends a HTTP response with status code 200.
 func (ctx *IndexUserPostContext) OK(r *JSON) error {
+	ctx.ResponseData.Header().Set("Access-Control-Allow-Origin", "*")
+
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
 		ctx.ResponseData.Header().Set("Content-Type", "application/json")
 	}
