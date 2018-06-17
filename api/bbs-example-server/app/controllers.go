@@ -42,7 +42,6 @@ type PingController interface {
 func MountPingController(service *goa.Service, ctrl PingController) {
 	initService(service)
 	var h goa.Handler
-	service.Mux.Handle("OPTIONS", "/ping", ctrl.MuxHandler("preflight", handlePingOrigin(cors.HandlePreflight()), nil))
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -56,36 +55,8 @@ func MountPingController(service *goa.Service, ctrl PingController) {
 		}
 		return ctrl.Ping(rctx)
 	}
-	h = handlePingOrigin(h)
 	service.Mux.Handle("GET", "/ping", ctrl.MuxHandler("ping", h, nil))
 	service.LogInfo("mount", "ctrl", "Ping", "action", "Ping", "route", "GET /ping")
-}
-
-// handlePingOrigin applies the CORS response headers corresponding to the origin.
-func handlePingOrigin(h goa.Handler) goa.Handler {
-
-	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
-		origin := req.Header.Get("Origin")
-		if origin == "" {
-			// Not a CORS request
-			return h(ctx, rw, req)
-		}
-		if cors.MatchOrigin(origin, "http://localhost:8888/swagger") {
-			ctx = goa.WithLogContext(ctx, "origin", origin)
-			rw.Header().Set("Access-Control-Allow-Origin", origin)
-			rw.Header().Set("Vary", "Origin")
-			rw.Header().Set("Access-Control-Expose-Headers", "X-Time")
-			rw.Header().Set("Access-Control-Max-Age", "600")
-			rw.Header().Set("Access-Control-Allow-Credentials", "true")
-			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
-				// We are handling a preflight request
-				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-			}
-			return h(ctx, rw, req)
-		}
-
-		return h(ctx, rw, req)
-	}
 }
 
 // UserPostController is the controller interface for the UserPost actions.
@@ -149,16 +120,14 @@ func handleUserPostOrigin(h goa.Handler) goa.Handler {
 			// Not a CORS request
 			return h(ctx, rw, req)
 		}
-		if cors.MatchOrigin(origin, "http://localhost:8888/swagger") {
+		if cors.MatchOrigin(origin, "*") {
 			ctx = goa.WithLogContext(ctx, "origin", origin)
 			rw.Header().Set("Access-Control-Allow-Origin", origin)
-			rw.Header().Set("Vary", "Origin")
-			rw.Header().Set("Access-Control-Expose-Headers", "X-Time")
-			rw.Header().Set("Access-Control-Max-Age", "600")
-			rw.Header().Set("Access-Control-Allow-Credentials", "true")
+			rw.Header().Set("Access-Control-Allow-Credentials", "false")
+			rw.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
 				// We are handling a preflight request
-				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST")
 			}
 			return h(ctx, rw, req)
 		}
