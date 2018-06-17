@@ -12,6 +12,21 @@ var _ = API("bbs-example-server", func() {
 	Scheme("http")
 })
 
+var _ = Resource("user_post", func() {
+	BasePath("/user_posts")
+	Action("index", func() {
+		Description("Fetch user posts.")
+		Routing(GET("/"))
+		Response(OK, UserPostMedia)
+	})
+
+	Action("create", func() {
+		Description("Create user post.")
+		Routing(POST("/"))
+		Response(OK)
+	})
+})
+
 var _ = Resource("ping", func() {
 	Action("ping", func() {
 		Routing(GET("/ping"))
@@ -20,22 +35,14 @@ var _ = Resource("ping", func() {
 	})
 })
 
-var _ = Resource("home", func() {
-	Action("home", func() {
-		Routing(GET("/home"))
-		Description("home.")
-		Response(OK, UserPostMedia)
-	})
-})
-
 var UserPostMedia = MediaType("application/json", func() {
 	Description("User post.")
 	Attributes(func() {
-		Attribute("message", String, "message", func() {
-			Example("message")
+		Attribute("messages", ArrayOf(String), "messages", func() {
+			Example([]string{"messages1", "message2"})
 		})
 	})
 	View("default", func() {
-		Attribute("message")
+		Attribute("messages")
 	})
 })
