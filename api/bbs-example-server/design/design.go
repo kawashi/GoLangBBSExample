@@ -8,7 +8,7 @@ import (
 var _ = API("bbs-example-server", func() {
 	Title("BBS Example Server.")
 	Description("A teaser for goa.")
-	Host("localhost:8080")
+	Host("localhost:8888")
 	Scheme("http")
 })
 

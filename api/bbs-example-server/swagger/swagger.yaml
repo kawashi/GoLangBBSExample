@@ -32,7 +32,7 @@ definitions:
         type: string
     title: UserPostPayload
     type: object
-host: localhost:8080
+host: localhost:8888
 info:
   description: A teaser for goa.
   title: BBS Example Server.

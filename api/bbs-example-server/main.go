@@ -48,7 +48,7 @@ func main() {
 	app.MountPingController(service, c2)
 
 	// Start service
-	if err := service.ListenAndServe(":8080"); err != nil {
+	if err := service.ListenAndServe(":8888"); err != nil {
 		service.LogError("startup", "err", err)
 	}
 
