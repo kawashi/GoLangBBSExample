@@ -15,32 +15,47 @@
 </template>
 
 <script>
+  import axios from "axios"
+
   export default {
     name: 'BBS',
     data () {
       return {
-        contents: []
+        contents: ["読み込み中"]
       }
     },
     state: {
       message: ''
     },
+    created: function() {
+      const self = this;
+      axios.get("http://localhost:8888/user_posts/")
+        .then(function(response) {
+          self.contents = [];
+          
+          response.data["messages"].forEach( message =>
+            self.contents.unshift(message)
+          );
+        })
+        .catch(function(error) {
+          console.log('エラーだよ: ' + error)
+        });
+    },
     methods: {
       submit: function(event) {
-        // TODO: 送信クリック後の処理
-        // TODO: 1. 画面に反映
-        // TODO: 2. GoのAPIの/user_postsにPOST
         if (this.message === '') return;
-        this.contents.unshift(this.message);
-        this.message = '';
-        vue.$forceUpdate();
+
+        const self = this;
+        const data = {message: this.message};
+        axios.post("http://localhost:8888/user_posts/", data)
+          .then(function() {
+            self.contents.unshift(self.message);
+            self.message = '';
+          })
+          .catch(function(error) {
+            console.log('エラーだよ: ' + error)
+          });
       }
-    },
-    created: function() {
-      // TODO: 初期化処理
-      // TODO: 1. GoのAPIの/user_postsをGETして、contentsに反映
-      this.contents.unshift("1件目の投稿");
-      this.contents.unshift("2件目の投稿");
     }
   }
 </script>
