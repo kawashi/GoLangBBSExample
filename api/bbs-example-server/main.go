@@ -39,7 +39,10 @@ func main() {
 	service.Use(middleware.LogRequest(true))
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
-	
+
+	// Mount "user_post" controller
+	c := NewUserPostController(service)
+	app.MountUserPostController(service, c)
 	// Mount "ping" controller
 	c2 := NewPingController(service)
 	app.MountPingController(service, c2)

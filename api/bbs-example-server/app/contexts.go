@@ -16,33 +16,6 @@ import (
 	"net/http"
 )
 
-// HomeHomeContext provides the home home action context.
-type HomeHomeContext struct {
-	context.Context
-	*goa.ResponseData
-	*goa.RequestData
-}
-
-// NewHomeHomeContext parses the incoming request URL and body, performs validations and creates the
-// context used by the home controller home action.
-func NewHomeHomeContext(ctx context.Context, r *http.Request, service *goa.Service) (*HomeHomeContext, error) {
-	var err error
-	resp := goa.ContextResponse(ctx)
-	resp.Service = service
-	req := goa.ContextRequest(ctx)
-	req.Request = r
-	rctx := HomeHomeContext{Context: ctx, ResponseData: resp, RequestData: req}
-	return &rctx, err
-}
-
-// OK sends a HTTP response with status code 200.
-func (ctx *HomeHomeContext) OK(r *JSON) error {
-	if ctx.ResponseData.Header().Get("Content-Type") == "" {
-		ctx.ResponseData.Header().Set("Content-Type", "application/json")
-	}
-	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
-}
-
 // PingPingContext provides the ping ping action context.
 type PingPingContext struct {
 	context.Context
@@ -70,4 +43,60 @@ func (ctx *PingPingContext) OK(resp []byte) error {
 	ctx.ResponseData.WriteHeader(200)
 	_, err := ctx.ResponseData.Write(resp)
 	return err
+}
+
+// CreateUserPostContext provides the user_post create action context.
+type CreateUserPostContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+}
+
+// NewCreateUserPostContext parses the incoming request URL and body, performs validations and creates the
+// context used by the user_post controller create action.
+func NewCreateUserPostContext(ctx context.Context, r *http.Request, service *goa.Service) (*CreateUserPostContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := CreateUserPostContext{Context: ctx, ResponseData: resp, RequestData: req}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *CreateUserPostContext) OK(resp []byte) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "text/plain")
+	}
+	ctx.ResponseData.WriteHeader(200)
+	_, err := ctx.ResponseData.Write(resp)
+	return err
+}
+
+// IndexUserPostContext provides the user_post index action context.
+type IndexUserPostContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+}
+
+// NewIndexUserPostContext parses the incoming request URL and body, performs validations and creates the
+// context used by the user_post controller index action.
+func NewIndexUserPostContext(ctx context.Context, r *http.Request, service *goa.Service) (*IndexUserPostContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := IndexUserPostContext{Context: ctx, ResponseData: resp, RequestData: req}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *IndexUserPostContext) OK(r *JSON) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
 }

@@ -43,7 +43,6 @@ func (m *UserPostDB) ListJSON(ctx context.Context) []*app.JSON {
 // UserPostToJSON loads a UserPost and builds the default view of media type Json.
 func (m *UserPost) UserPostToJSON() *app.JSON {
 	userpost := &app.JSON{}
-	userpost.Message = &m.Message
 
 	return userpost
 }

@@ -31,33 +31,6 @@ func initService(service *goa.Service) {
 	service.Decoder.Register(goa.NewJSONDecoder, "*/*")
 }
 
-// HomeController is the controller interface for the Home actions.
-type HomeController interface {
-	goa.Muxer
-	Home(*HomeHomeContext) error
-}
-
-// MountHomeController "mounts" a Home resource controller on the given service.
-func MountHomeController(service *goa.Service, ctrl HomeController) {
-	initService(service)
-	var h goa.Handler
-
-	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
-		// Check if there was an error loading the request
-		if err := goa.ContextError(ctx); err != nil {
-			return err
-		}
-		// Build the context
-		rctx, err := NewHomeHomeContext(ctx, req, service)
-		if err != nil {
-			return err
-		}
-		return ctrl.Home(rctx)
-	}
-	service.Mux.Handle("GET", "/home", ctrl.MuxHandler("home", h, nil))
-	service.LogInfo("mount", "ctrl", "Home", "action", "Home", "route", "GET /home")
-}
-
 // PingController is the controller interface for the Ping actions.
 type PingController interface {
 	goa.Muxer
@@ -83,4 +56,47 @@ func MountPingController(service *goa.Service, ctrl PingController) {
 	}
 	service.Mux.Handle("GET", "/ping", ctrl.MuxHandler("ping", h, nil))
 	service.LogInfo("mount", "ctrl", "Ping", "action", "Ping", "route", "GET /ping")
+}
+
+// UserPostController is the controller interface for the UserPost actions.
+type UserPostController interface {
+	goa.Muxer
+	Create(*CreateUserPostContext) error
+	Index(*IndexUserPostContext) error
+}
+
+// MountUserPostController "mounts" a UserPost resource controller on the given service.
+func MountUserPostController(service *goa.Service, ctrl UserPostController) {
+	initService(service)
+	var h goa.Handler
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewCreateUserPostContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Create(rctx)
+	}
+	service.Mux.Handle("POST", "/user_posts/", ctrl.MuxHandler("create", h, nil))
+	service.LogInfo("mount", "ctrl", "UserPost", "action", "Create", "route", "POST /user_posts/")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewIndexUserPostContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Index(rctx)
+	}
+	service.Mux.Handle("GET", "/user_posts/", ctrl.MuxHandler("index", h, nil))
+	service.LogInfo("mount", "ctrl", "UserPost", "action", "Index", "route", "GET /user_posts/")
 }

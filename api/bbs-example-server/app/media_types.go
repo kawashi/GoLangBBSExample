@@ -14,6 +14,6 @@ package app
 //
 // Identifier: application/json; view=default
 type JSON struct {
-	// message
-	Message *string `form:"message,omitempty" json:"message,omitempty" yaml:"message,omitempty" xml:"message,omitempty"`
+	// messages
+	Messages []string `form:"messages,omitempty" json:"messages,omitempty" yaml:"messages,omitempty" xml:"messages,omitempty"`
 }

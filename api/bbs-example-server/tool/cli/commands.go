@@ -26,13 +26,18 @@ import (
 )
 
 type (
-	// HomeHomeCommand is the command line data structure for the home action of home
-	HomeHomeCommand struct {
+	// PingPingCommand is the command line data structure for the ping action of ping
+	PingPingCommand struct {
 		PrettyPrint bool
 	}
 
-	// PingPingCommand is the command line data structure for the ping action of ping
-	PingPingCommand struct {
+	// CreateUserPostCommand is the command line data structure for the create action of user_post
+	CreateUserPostCommand struct {
+		PrettyPrint bool
+	}
+
+	// IndexUserPostCommand is the command line data structure for the index action of user_post
+	IndexUserPostCommand struct {
 		PrettyPrint bool
 	}
 )
@@ -41,12 +46,12 @@ type (
 func RegisterCommands(app *cobra.Command, c *client.Client) {
 	var command, sub *cobra.Command
 	command = &cobra.Command{
-		Use:   "home",
-		Short: `home.`,
+		Use:   "create",
+		Short: `Create user post.`,
 	}
-	tmp1 := new(HomeHomeCommand)
+	tmp1 := new(CreateUserPostCommand)
 	sub = &cobra.Command{
-		Use:   `home ["/home"]`,
+		Use:   `user-post ["/user_posts/"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
@@ -55,17 +60,31 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "ping",
-		Short: `PingPong.`,
+		Use:   "index",
+		Short: `Fetch user posts.`,
 	}
-	tmp2 := new(PingPingCommand)
+	tmp2 := new(IndexUserPostCommand)
 	sub = &cobra.Command{
-		Use:   `ping ["/ping"]`,
+		Use:   `user-post ["/user_posts/"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp2.Run(c, args) },
 	}
 	tmp2.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp2.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "ping",
+		Short: `PingPong.`,
+	}
+	tmp3 := new(PingPingCommand)
+	sub = &cobra.Command{
+		Use:   `ping ["/ping"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp3.Run(c, args) },
+	}
+	tmp3.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp3.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 }
@@ -223,30 +242,6 @@ func boolArray(ins []string) ([]bool, error) {
 	return vals, nil
 }
 
-// Run makes the HTTP request corresponding to the HomeHomeCommand command.
-func (cmd *HomeHomeCommand) Run(c *client.Client, args []string) error {
-	var path string
-	if len(args) > 0 {
-		path = args[0]
-	} else {
-		path = "/home"
-	}
-	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
-	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.HomeHome(ctx, path)
-	if err != nil {
-		goa.LogError(ctx, "failed", "err", err)
-		return err
-	}
-
-	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
-	return nil
-}
-
-// RegisterFlags registers the command flags with the command line.
-func (cmd *HomeHomeCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-}
-
 // Run makes the HTTP request corresponding to the PingPingCommand command.
 func (cmd *PingPingCommand) Run(c *client.Client, args []string) error {
 	var path string
@@ -269,4 +264,52 @@ func (cmd *PingPingCommand) Run(c *client.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *PingPingCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+}
+
+// Run makes the HTTP request corresponding to the CreateUserPostCommand command.
+func (cmd *CreateUserPostCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/user_posts/"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.CreateUserPost(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *CreateUserPostCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+}
+
+// Run makes the HTTP request corresponding to the IndexUserPostCommand command.
+func (cmd *IndexUserPostCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/user_posts/"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.IndexUserPost(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *IndexUserPostCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 }

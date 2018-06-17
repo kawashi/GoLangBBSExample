@@ -3,26 +3,31 @@ consumes:
 - application/xml
 - application/gob
 - application/x-gob
+definitions:
+  Json:
+    description: User post. (default view)
+    example:
+      messages:
+      - messages1
+      - message2
+    properties:
+      messages:
+        description: messages
+        example:
+        - messages1
+        - message2
+        items:
+          example: Error qui aliquid et qui.
+          type: string
+        type: array
+    title: 'Mediatype identifier: application/json; view=default'
+    type: object
 host: localhost:8080
 info:
   description: A teaser for goa.
   title: BBS Example Server.
   version: ""
 paths:
-  /home:
-    get:
-      description: home.
-      operationId: home#home
-      produces:
-      - text/plain
-      responses:
-        "200":
-          description: OK
-      schemes:
-      - http
-      summary: home home
-      tags:
-      - home
   /ping:
     get:
       description: PingPong.
@@ -37,11 +42,41 @@ paths:
       summary: ping ping
       tags:
       - ping
+  /user_posts/:
+    get:
+      description: Fetch user posts.
+      operationId: user_post#index
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Json'
+      schemes:
+      - http
+      summary: index user_post
+      tags:
+      - user_post
+    post:
+      description: Create user post.
+      operationId: user_post#create
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+      schemes:
+      - http
+      summary: create user_post
+      tags:
+      - user_post
 produces:
 - application/json
 - application/xml
 - application/gob
 - application/x-gob
+responses:
+  OK:
+    description: OK
 schemes:
 - http
 swagger: "2.0"
