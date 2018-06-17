@@ -5,7 +5,7 @@ GoのAPIサーバを使った掲示板サイトの練習です。
 
 # 構成
 
-- フロントエンド: Vue.js + SuperAgent
+- フロントエンド: Vue.js + axios
 - バックエンド: Go + Goa + Gorm + MySQL
 
 # 仕様
