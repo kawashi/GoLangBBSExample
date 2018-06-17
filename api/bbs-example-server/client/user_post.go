@@ -11,6 +11,7 @@
 package client
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -24,8 +25,8 @@ func CreateUserPostPath() string {
 }
 
 // Create user post.
-func (c *Client) CreateUserPost(ctx context.Context, path string) (*http.Response, error) {
-	req, err := c.NewCreateUserPostRequest(ctx, path)
+func (c *Client) CreateUserPost(ctx context.Context, path string, payload *UserPostPayload, contentType string) (*http.Response, error) {
+	req, err := c.NewCreateUserPostRequest(ctx, path, payload, contentType)
 	if err != nil {
 		return nil, err
 	}
@@ -33,15 +34,29 @@ func (c *Client) CreateUserPost(ctx context.Context, path string) (*http.Respons
 }
 
 // NewCreateUserPostRequest create the request corresponding to the create action endpoint of the user_post resource.
-func (c *Client) NewCreateUserPostRequest(ctx context.Context, path string) (*http.Request, error) {
+func (c *Client) NewCreateUserPostRequest(ctx context.Context, path string, payload *UserPostPayload, contentType string) (*http.Request, error) {
+	var body bytes.Buffer
+	if contentType == "" {
+		contentType = "*/*" // Use default encoder
+	}
+	err := c.Encoder.Encode(payload, &body, contentType)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode body: %s", err)
+	}
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	req, err := http.NewRequest("POST", u.String(), nil)
+	req, err := http.NewRequest("POST", u.String(), &body)
 	if err != nil {
 		return nil, err
+	}
+	header := req.Header
+	if contentType == "*/*" {
+		header.Set("Content-Type", "application/json")
+	} else {
+		header.Set("Content-Type", contentType)
 	}
 	return req, nil
 }

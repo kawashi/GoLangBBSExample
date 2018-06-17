@@ -24,11 +24,11 @@ import (
 	"net/url"
 )
 
-// CreateUserPostOK runs the method Create of the given controller with the given parameters.
+// CreateUserPostOK runs the method Create of the given controller with the given parameters and payload.
 // It returns the response writer so it's possible to inspect the response headers.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func CreateUserPostOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserPostController) http.ResponseWriter {
+func CreateUserPostOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.UserPostController, payload *app.UserPostPayload) http.ResponseWriter {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -68,6 +68,7 @@ func CreateUserPostOK(t goatest.TInterface, ctx context.Context, service *goa.Se
 		t.Errorf("unexpected parameter validation error: %+v", e)
 		return nil
 	}
+	createCtx.Payload = payload
 
 	// Perform action
 	_err = ctrl.Create(createCtx)

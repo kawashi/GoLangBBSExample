@@ -22,9 +22,14 @@ var _ = Resource("user_post", func() {
 
 	Action("create", func() {
 		Description("Create user post.")
+		Payload(UserPostPayload)
 		Routing(POST("/"))
 		Response(OK)
 	})
+})
+
+var UserPostPayload = Type("UserPostPayload", func() {
+	Attribute("message", String, "User post message.")
 })
 
 var _ = Resource("ping", func() {

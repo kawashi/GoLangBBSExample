@@ -80,9 +80,15 @@ func MountUserPostController(service *goa.Service, ctrl UserPostController) {
 		if err != nil {
 			return err
 		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*UserPostPayload)
+		} else {
+			return goa.MissingPayloadError()
+		}
 		return ctrl.Create(rctx)
 	}
-	service.Mux.Handle("POST", "/user_posts/", ctrl.MuxHandler("create", h, nil))
+	service.Mux.Handle("POST", "/user_posts/", ctrl.MuxHandler("create", h, unmarshalCreateUserPostPayload))
 	service.LogInfo("mount", "ctrl", "UserPost", "action", "Create", "route", "POST /user_posts/")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
@@ -99,4 +105,14 @@ func MountUserPostController(service *goa.Service, ctrl UserPostController) {
 	}
 	service.Mux.Handle("GET", "/user_posts/", ctrl.MuxHandler("index", h, nil))
 	service.LogInfo("mount", "ctrl", "UserPost", "action", "Index", "route", "GET /user_posts/")
+}
+
+// unmarshalCreateUserPostPayload unmarshals the request body into the context request data Payload field.
+func unmarshalCreateUserPostPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &userPostPayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
 }

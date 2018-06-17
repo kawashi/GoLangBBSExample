@@ -9,3 +9,24 @@
 // --version=v1.3.1
 
 package app
+
+// userPostPayload user type.
+type userPostPayload struct {
+	// User post message.
+	Message *string `form:"message,omitempty" json:"message,omitempty" yaml:"message,omitempty" xml:"message,omitempty"`
+}
+
+// Publicize creates UserPostPayload from userPostPayload
+func (ut *userPostPayload) Publicize() *UserPostPayload {
+	var pub UserPostPayload
+	if ut.Message != nil {
+		pub.Message = ut.Message
+	}
+	return &pub
+}
+
+// UserPostPayload user type.
+type UserPostPayload struct {
+	// User post message.
+	Message *string `form:"message,omitempty" json:"message,omitempty" yaml:"message,omitempty" xml:"message,omitempty"`
+}

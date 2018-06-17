@@ -14,6 +14,7 @@ import (
 	"BBS-Example/api/bbs-example-server/client"
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/goadesign/goa"
 	goaclient "github.com/goadesign/goa/client"
 	uuid "github.com/goadesign/goa/uuid"
@@ -33,6 +34,8 @@ type (
 
 	// CreateUserPostCommand is the command line data structure for the create action of user_post
 	CreateUserPostCommand struct {
+		Payload     string
+		ContentType string
 		PrettyPrint bool
 	}
 
@@ -53,7 +56,14 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 	sub = &cobra.Command{
 		Use:   `user-post ["/user_posts/"]`,
 		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
+		Long: `
+
+Payload example:
+
+{
+   "message": "Error qui aliquid et qui."
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp1.Run(c, args) },
 	}
 	tmp1.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp1.PrettyPrint, "pp", false, "Pretty print response body")
@@ -274,9 +284,16 @@ func (cmd *CreateUserPostCommand) Run(c *client.Client, args []string) error {
 	} else {
 		path = "/user_posts/"
 	}
+	var payload client.UserPostPayload
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.CreateUserPost(ctx, path)
+	resp, err := c.CreateUserPost(ctx, path, &payload, cmd.ContentType)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -288,6 +305,8 @@ func (cmd *CreateUserPostCommand) Run(c *client.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *CreateUserPostCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 }
 
 // Run makes the HTTP request corresponding to the IndexUserPostCommand command.

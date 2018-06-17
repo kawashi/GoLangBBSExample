@@ -17,10 +17,20 @@ definitions:
         - messages1
         - message2
         items:
-          example: Error qui aliquid et qui.
+          example: Voluptates explicabo in vitae non.
           type: string
         type: array
     title: 'Mediatype identifier: application/json; view=default'
+    type: object
+  UserPostPayload:
+    example:
+      message: Error qui aliquid et qui.
+    properties:
+      message:
+        description: User post message.
+        example: Error qui aliquid et qui.
+        type: string
+    title: UserPostPayload
     type: object
 host: localhost:8080
 info:
@@ -59,6 +69,12 @@ paths:
     post:
       description: Create user post.
       operationId: user_post#create
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/UserPostPayload'
       produces:
       - text/plain
       responses:

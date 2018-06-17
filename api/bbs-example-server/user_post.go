@@ -18,19 +18,18 @@ func NewUserPostController(service *goa.Service) *UserPostController {
 
 // Create runs the create action.
 func (c *UserPostController) Create(ctx *app.CreateUserPostContext) error {
-	// UserPostController_Create: start_implement
+	userPost := &models.UserPost{}
+	userPost.Message = *ctx.Payload.Message
+	db.Create(&userPost)
 
-	// Put your logic here
-
-	return nil
-	// UserPostController_Create: end_implement
+	return ctx.OK([]byte("OK"))
 }
 
 // Index runs the index action.
 func (c *UserPostController) Index(ctx *app.IndexUserPostContext) error {
 	userPosts := &[]models.UserPost{}
 	db.Find(&userPosts)
-	
+
 	return ctx.OK(UserPostsToJSON(userPosts))
 }
 
