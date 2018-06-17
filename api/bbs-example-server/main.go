@@ -39,10 +39,7 @@ func main() {
 	service.Use(middleware.LogRequest(true))
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
-
-	// Mount "home" controller
-	c := NewHomeController(service)
-	app.MountHomeController(service, c)
+	
 	// Mount "ping" controller
 	c2 := NewPingController(service)
 	app.MountPingController(service, c2)
