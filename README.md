@@ -1,5 +1,7 @@
 # go-bbs-example
 
+![gif](https://i.gyazo.com/02c76a336376f3d5db4c44c92891f595.gif)
+
 GoのAPIサーバを使った掲示板サイトの練習です。  
 フロントエンドからGoのAPIを叩き、データの更新と読み取りが出来るようになることを目指しています。
 
