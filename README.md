@@ -7,8 +7,8 @@ GoのAPIサーバを使った掲示板サイトの練習です。
 
 # 構成
 
-- フロントエンド: Vue.js + axios
-- バックエンド: Go + Goa + Gorm + MySQL
+- フロントエンド (`/api`) : Vue.js + axios
+- バックエンド (`/web`) : Go + Goa + Gorm + MySQL
 
 # 仕様
 
