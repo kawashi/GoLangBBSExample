@@ -7,7 +7,7 @@ IDEは [GoLand](https://www.jetbrains.com/go/) を使用しています。
 
 ## Golang
 
-- [A Tour of Go](https://tour.golang.org/welcome/1)
+- [A Tour of Go](https://go-tour-jp.appspot.com/welcome/1)
 - [他言語プログラマがgolangの基本を押さえる為のまとめ - Qiita](https://qiita.com/gcfuji/items/e2a3d7ce7ab8868e37f7)
 - [Golangで環境変数を扱う](https://orebibou.com/2017/04/golang%E3%81%A7%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0%E3%82%92%E6%89%B1%E3%81%86/)
 
